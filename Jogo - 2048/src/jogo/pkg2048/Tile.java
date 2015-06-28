@@ -23,8 +23,4 @@ public class Tile {
     public void empty(){
         value = 0;
     }
-    
-    public void print(){
-        System.out.println(value);
-    }
 }
