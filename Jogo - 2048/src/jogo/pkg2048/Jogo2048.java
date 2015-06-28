@@ -12,14 +12,14 @@ public class Jogo2048 {
         C2.newGame();
 
         Scanner entrada = new Scanner(System.in);
-        String c = null;
+        String option = null;
         
-        while(!"s".equals(c)){
+        while(!"s".equals(option)){
             System.out.println("|R|right|L|left|D|Down|U|up");
            
-            c = entrada.next();
+            option = entrada.next();
 
-            switch (c) {
+            switch (option) {
                 case "d":
                     C2.down();
                     break;

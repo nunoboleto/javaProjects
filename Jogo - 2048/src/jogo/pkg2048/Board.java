@@ -40,6 +40,11 @@ public class Board{
         }
     }
     public void newGame(){
+        System.out.println(" ____  __   ___ ____");
+        System.out.println("(___ \\/  \\ / _ / _  \\");
+        System.out.println("/ __ (  0 (__  ) _  (");
+        System.out.println("(____)\\__/  (__\\____/");
+        
         addTiles();
         
         randomValue();
@@ -51,9 +56,9 @@ public class Board{
     }
     
     public void printGrid(){
-        System.out.println("xx--SCORE--xx");
-        System.out.println("xx--"+score+"--xx");
-        System.out.println("--------");
+        System.out.println("-----------------");
+        System.out.println("  SCORE -- "+score+"!!");
+        System.out.println("-----------------");
         int x = 0;
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -62,7 +67,7 @@ public class Board{
             }
            System.out.printf("\n");
         }
-        System.out.println("--------");
+        System.out.println("-----------------");
     }
     
     public void restartGame(){
