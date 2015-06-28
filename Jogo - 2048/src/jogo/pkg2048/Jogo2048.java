@@ -1,46 +1,43 @@
 package jogo.pkg2048;
 
-import java.util.Scanner;
+/* Autor Nuno Boleto l32592*/
 
-/*
- * @author nunoboleto
- */
+import java.util.Scanner;
 
 public class Jogo2048 {
 
     public static void main(String[] args) {
-        Board c1 = new Board(4);
-        c1.newGame();
         
+        Board C2 = new Board(4);
+        C2.newGame();
+
         Scanner entrada = new Scanner(System.in);
         String c = null;
         
         while(!"s".equals(c)){
-            System.out.println("Movimento??");
+            System.out.println("|R|right|L|left|D|Down|U|up");
+           
             c = entrada.next();
 
             switch (c) {
                 case "d":
-                    c1.down();
-                    c1.printGrid(); 
+                    C2.down();
                     break;
+            
                 case "u":
-                    c1.up();
-                    c1.printGrid(); 
-                    break;
-                case "r":
-                    c1.right();
-                    c1.printGrid(); 
-                    break;
-                case "l":
-                    c1.left();
-                    c1.printGrid(); 
+                    C2.up();
                     break;
                 
+                case "l":
+                    C2.left();
+                    break;
+                
+                case "r":
+                    C2.right();
+                    break;              
             }
-        }
-        
-    }
+        }    
+    } 
 }
     
 

@@ -1,220 +1,230 @@
+
 package jogo.pkg2048;
 
-//HELP - https://www.youtube.com/watch?v=vLQhd6vQ9Wk&spfreload=10
-
-import javax.swing.JFrame;
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
-public class Board extends JFrame{
-    
+public class Board{
     int size;
     int grid[][];
     int score;
     Tile Tile;
-    Tile[] allTile;
-    JFrame frame;
+    private ArrayList<Tile> tileList;
     
     Board(int size){    
         this.size = size;
-
     }
-
-
-    public void addTile(){
-        int i;
-        
-        allTile = new Tile[size*size]; // cria um array de 16 Objectos para armazenar os Tiles
-        
-        for(i=0; i < allTile.length; i++){ // para cada elemento do Array é criado um Obejcto do tipo Tile
+    
+    private void addTiles(){
+        tileList = new ArrayList<Tile>(size*size);
+        for(int i = 0; i < size*size; i++){
             Tile = new Tile();
-            allTile[i] = Tile;
+            tileList.add(Tile);
         }
     }
-
     
+    public void randomValue() throws StackOverflowError{
+        try {
+            Random gerador = new Random();
+            int ranCoord = gerador.nextInt(size * size);
+
+            int randValue = (Math.random()<0.5)?2:4; 
+                if(tileList.get(ranCoord).isEmpty() == true){
+                    tileList.get(ranCoord).setValue(randValue);
+                }else{
+                    randomValue();
+                } 
+    
+        }catch (StackOverflowError e) {
+            gameOver();
+        }
+    }
     public void newGame(){
-        addTile();
+        addTiles();
+        
+        randomValue();
+        randomValue();
+
         grid = new int[size][size];
         
-        addTileValue();
-        addTileValue();
-        int x = 0;
-        for (int i = 0; i < size; i++) {
-           for (int j = 0; j < size; j++) {
-             System.out.printf("%d ", grid[i][j] = allTile[x].value);
-             x++;
-           }
-           System.out.printf("\n");
-         }
-    }
-    
-    public void restartGame(){
-        for(int i = 0; i < allTile.length; i++){
-            allTile[i].value = 0;
-        }
-        newGame();
+        printGrid();
     }
     
     public void printGrid(){
-
+        System.out.println("xx--SCORE--xx");
+        System.out.println("xx--"+score+"--xx");
+        System.out.println("--------");
         int x = 0;
-        
-        System.out.println("***************");
-        
-        System.out.println("SCORE -- " + score + " --");
-        
-        System.out.println("***************");
-        
-        addTileValue();
-  
         for (int i = 0; i < size; i++) {
-          for (int j = 0; j < size; j++) {
-            System.out.printf("%d ", grid[i][j] = allTile[x].value);
-            x++;
-          }
-          System.out.printf("\n");
+            for (int j = 0; j < size; j++) {
+                System.out.printf("%d    "   , grid[i][j] = tileList.get(x).getValue());
+                x++;
+            }
+           System.out.printf("\n");
         }
-        System.out.println("***************");
+        System.out.println("--------");
     }
     
-    public void addTileValue(){
-       
-        Random gerador = new Random();
-        
-        int ranCoord = gerador.nextInt(size * size);
-        
-        int randValue = (Math.random()<0.5)?2:4;
-            
-            if(allTile[ranCoord].isEmpty() == true){
-                allTile[ranCoord].changeValue(randValue);
-            }else{
-                addTileValue();
-            }
+    public void restartGame(){
+        tileList.clear();
+        newGame();
     }
     
-    
-    public void down(){
-        int i;
-        if(!isFull()){
-            for(i = 0; i < allTile.length; i++){
-                if(!allTile[i].isEmpty()){
-                    if(!downEdge(i)){
-                        if(allTile[i].value == allTile[i+size].value || allTile[i+size].isEmpty()){
-                            allTile[i+size].value = allTile[i+size].value + allTile[i].value;
-                            allTile[i].value = 0;
-                        }
-                    }    
-                }
-            }
-        }       
-    }
-    
-    /*public void up(){
-        int i;
-        for(i = 15; i > 0; i--){
-            if(!allTile[i].isEmpty()){
-                if(!upEdge(i)){
-                    if(allTile[i].value == allTile[i-size].value || allTile[i-size].isEmpty()){
-                        allTile[i-size].value = allTile[i-size].value + allTile[i].value;
-                        allTile[i].value = 0;
-                    }
-                }    
-            }
-        }
-    }
-    */
-    
-    public void up(){
-        for(int i = 0; i < allTile.length; i++){
-                if(!allTile[i].isEmpty()){
-                    if(!upEdge(i)){
-                        if( allTile[i+size].isEmpty()){
-                            allTile[i+size].value = allTile[i+size].value + allTile[i].value;
-                            allTile[i].value = 0;
-                            if(!upEdge(i)){
-                                i = i-2; 
-                            }   
-                        }
-                    }    
-                    if(!upEdge(i)){    
-                        if(allTile[i].value == allTile[i+size].value){
-                            allTile[i+size].value = allTile[i+size].value + allTile[i].value;
-                            allTile[i].value = 0;
-                            if(!upEdge(i)){
-                                i = i-1; 
-
-                            }   
-                        }
-                    }    
-
-                }        
-        }        
+    public void gameOver(){
+        System.out.println("GAME OVER");
+        restartGame();
     }
     
     public void score(int i){
         score = score + i;
     }
     
+    public int movement(int i, int nexTile){
+        if(tileList.get(nexTile).isEmpty()){
+            tileList.get(nexTile).setValue(tileList.get(i).getValue());
+            tileList.get(i).empty();
+            return 1;
+        }else if(tileList.get(i).getValue() == tileList.get(nexTile).getValue()){
+            tileList.get(nexTile).setValue(tileList.get(i).value + tileList.get(nexTile).value);
+            tileList.get(i).empty();
+            score(tileList.get(nexTile).value);
+            return 0;
+        }
+        return -1;
+    }
+    
+    public boolean isMovable(String point){
+        int numOfTiles = 0;
+        int noMoovTiles = 0;
+        int nexTile = 0;
+        boolean edge = false;
+        
+        for(int i = 0; i < tileList.size(); i++){
+            switch (point) {
+                case "d":
+                    nexTile = i+size;
+                    edge = downEdge(i);
+                    break;
+                case "u":
+                    nexTile = i-size;
+                    edge = upEdge(i);
+                    break;
+                case "l":
+                    nexTile = i-1;
+                    edge = leftEdge(i);
+                    break;
+                case "r":
+                    nexTile = i+1;
+                    edge = rightEdge(i);
+                    break;
+            }
+            if(!edge){
+                if(!tileList.get(i).isEmpty()){
+                    numOfTiles++;
+                    if((tileList.get(i).getValue() != tileList.get(nexTile).getValue())==true && tileList.get(nexTile).isEmpty()==false){
+                        noMoovTiles++;
+                    }
+                }
+            }else if(!tileList.get(i).isEmpty()){
+                noMoovTiles++;
+                numOfTiles++;
+            }
+        }  
+        if(numOfTiles == 16 && noMoovTiles == 16){
+            gameOver();
+        }else if(numOfTiles == noMoovTiles){
+            return false;
+        }
+        return true;
+    }
+    
+    public void down(){
+        String point = "d";
+        if(isMovable(point) == true){
+            for(int i = (size*size)-1; i >= 0; i--){
+            int nexTile = i+size;
+                if(!downEdge(i) && !tileList.get(i).isEmpty()){ 
+                    if(movement(i,nexTile) == 1){
+                        if(!downEdge(i)){
+                            i = i+(size*2); 
+                        }   
+                    }else if(movement(i,nexTile) == 0){
+                        if(!downEdge(i)){
+                            i = i+(size); 
+                        }
+                    }    
+                }
+            }
+            randomValue();
+            printGrid();
+        }   
+    }
+    
+    public void up(){
+        String point = "u";
+        if(isMovable(point) == true){
+            for(int i = 0; i <= (size*size)-1; i++){
+            int nexTile = i-size;
+                if(!upEdge(i) && !tileList.get(i).isEmpty()){ 
+                    if(movement(i,nexTile) == 1){
+                        if(!upEdge(i)){
+                            i = i-(size*2); 
+                        }   
+                    }else if(movement(i,nexTile) == 0){
+                        if(!upEdge(i)){
+                            i = i-(size); 
+                        }
+                    }    
+                }
+            }
+            randomValue();
+            printGrid();
+        }    
+    }    
     
     public void left(){
-        for(int i = 0; i < allTile.length; i++){
-                if(!allTile[i].isEmpty()){
-                    if(!leftEdge(i)){
-                        if(allTile[i-1].isEmpty()){
-                            allTile[i-1].value = allTile[i-1].value + allTile[i].value;
-                            allTile[i].value = 0;
-                            if(!leftEdge(i)){
-                                i = i-2; 
-                            }   
+        String point = "l";
+        if(isMovable(point) == true){
+            for(int i = 0; i < tileList.size(); i++){
+            int nexTile = i-1;
+                if(!leftEdge(i) && !tileList.get(i).isEmpty()){ 
+                    if(movement(i,nexTile) == 1){
+                        if(!leftEdge(i)){
+                            i = i-2; 
+                        }   
+                    }else if(movement(i,nexTile) == 0){
+                        if(!leftEdge(i)){
+                            i = i-1; 
                         }
                     }    
-                    if(!leftEdge(i)){    
-                        if(allTile[i].value == allTile[i-1].value){
-                            allTile[i-1].value = allTile[i-1].value + allTile[i].value;
-                            allTile[i].value = 0;
-                            score(allTile[i-1].value);
-                            if(!leftEdge(i)){
-                                i = i-1; 
-
-                            }   
-                        }
-                    }    
-
-                }        
-        }        
+                }
+            }
+            randomValue();
+            printGrid();
+        }    
     }
 
     public void right(){
-        for(int i = 15; i >= 0; i--){
-                if(!allTile[i].isEmpty()){
-                    if(!rightEdge(i)){
-                        if(allTile[i+1].isEmpty()){
-                            allTile[i+1].value = allTile[i+1].value + allTile[i].value;
-                            allTile[i].value = 0;
-                            if(!rightEdge(i)){
-                                i = i+2; 
-                            }   
+        String point = "r";
+        if(isMovable(point) == true){
+            for(int i = 15; i >= 0; i--){
+            int nexTile = i+1;
+                if(!rightEdge(i) && !tileList.get(i).isEmpty()){ 
+                    if(movement(i,nexTile) == 1){
+                        if(!rightEdge(i)){
+                            i = i+2; 
+                        }   
+                    }else if(movement(i,nexTile) == 0){
+                        if(!rightEdge(i)){
+                            i = i+1; 
                         }
                     }    
-                    if(!rightEdge(i)){    
-                        if(allTile[i].value == allTile[i+1].value){
-                            allTile[i+1].value = allTile[i+1].value + allTile[i].value;
-                            allTile[i].value = 0;
-                            score(allTile[i+1].value);
-                            if(!rightEdge(i)){
-                                i = i+1; 
-
-                            }   
-                        }
-                    }    
-
-                }        
-        }        
+                }
+            }
+            randomValue();
+            printGrid();
+        }    
     }
-
-    
-
     
     public boolean downEdge(int i){
         return i == 12 || i == 13 || i == 14 || i >= 15;
@@ -232,37 +242,8 @@ public class Board extends JFrame{
         return i <= 0 || i == 4 || i == 8 || i == 12;
     }
     
-    public boolean isFull(){
-        
-        int count = 0;
-        for(int i = 0; i < allTile.length; i++){
-            if(!allTile[i].isEmpty()){
-                if(count == 15){
-                    return true;
-                }   
-                count++;
-            }else{
-                return false;
-            } 
-        }
-        return false;
-    }
     
-    public void gameOver(){
-        System.out.println("GAME OVER");
-        System.out.println("NEW GAME? Y/N");
+}
 
-        Scanner entry = new Scanner(System.in);
-        String option = "";
 
-        option = entry.next();
 
-        switch (option) {
-            case "y":
-                restartGame();
-                break;
-            case "n":
-                break;
-        }
-    }    
-}    
