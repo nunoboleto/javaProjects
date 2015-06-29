@@ -7,10 +7,9 @@ import java.util.Random;
 public class Board{
     int size;
     int grid[][];
-    private static int score;
+    int score;
     Tile Tile;
     private ArrayList<Tile> tileList;
-    private ArrayList<Integer> edges;
     
     Board(int size){    
         this.size = size;
@@ -252,10 +251,7 @@ public class Board{
                 }
             }    
         }
-        //System.out.println(false);
         return false;
- 
-        //return i == 3 || i == 7 || i == 11 || i >= 15;  
     }
     
     public boolean leftEdge(int i){
@@ -269,7 +265,6 @@ public class Board{
             }    
         }
         return false;
-        //return i <= 0 || i == 4 || i == 8 || i == 12;
     }
     
     
