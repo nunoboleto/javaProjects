@@ -7,13 +7,15 @@ import java.util.Random;
 public class Board{
     int size;
     int grid[][];
-    int score;
+    private static int score;
     Tile Tile;
     private ArrayList<Tile> tileList;
+    private ArrayList<Integer> edges;
     
     Board(int size){    
         this.size = size;
     }
+    
     
     private void addTiles(){
         tileList = new ArrayList<Tile>(size*size);
@@ -135,7 +137,7 @@ public class Board{
                 numOfTiles++;
             }
         }  
-        if(numOfTiles == 16 && noMoovTiles == 16){
+        if(numOfTiles == size*size && noMoovTiles == size*size){
             gameOver();
         }else if(numOfTiles == noMoovTiles){
             return false;
@@ -212,7 +214,7 @@ public class Board{
     public void right(){
         String point = "r";
         if(isMovable(point) == true){
-            for(int i = 15; i >= 0; i--){
+            for(int i = size*size-1; i >= 0; i--){
             int nexTile = i+1;
                 if(!rightEdge(i) && !tileList.get(i).isEmpty()){ 
                     if(movement(i,nexTile) == 1){
@@ -232,19 +234,42 @@ public class Board{
     }
     
     public boolean downEdge(int i){
-        return i == 12 || i == 13 || i == 14 || i >= 15;
+        return i >= (size*size)-size;
     }
     
     public boolean upEdge(int i){
-        return i <= 0 || i == 1 || i == 2 || i == 3;
-    }
+        return i < size;
+    }   
     
     public boolean rightEdge(int i){
-        return i == 3 || i == 7 || i == 11 || i >= 15;
+        
+        for(int j = 1; j <= size; j++) {
+            if(!tileList.get(i).isEmpty()){
+                if ((size*j)-1 == i) {
+                    return true;
+                }else if(i > size*size){
+                    return true;
+                }
+            }    
+        }
+        //System.out.println(false);
+        return false;
+ 
+        //return i == 3 || i == 7 || i == 11 || i >= 15;  
     }
     
     public boolean leftEdge(int i){
-        return i <= 0 || i == 4 || i == 8 || i == 12;
+        for(int j = 0; j <= size; j++) {
+            if(!tileList.get(i).isEmpty()){
+                if ((size*j) == i) {
+                    return true;
+                }else if(i < 0){
+                    return true;
+                }
+            }    
+        }
+        return false;
+        //return i <= 0 || i == 4 || i == 8 || i == 12;
     }
     
     
